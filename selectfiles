@@ -1,6 +1,5 @@
-#!/bin/bash
+#!/usr/bin/osascript
 
-osascript - <<EOF "$@"
 on run argv
 	set filesToSelect to {}
 	repeat with filePath in argv
@@ -11,5 +10,3 @@ on run argv
 	end
 	return
 end
-EOF
-
