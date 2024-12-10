@@ -2,11 +2,17 @@
 
 on run argv
 	set filesToSelect to {}
+	set pwd to do shell script "pwd"
 	repeat with filePath in argv
+		set firstCharOfFilePath to text 1 of filePath
+		if firstCharOfFilePath is not equal to "/" then
+			set filePath to pwd & "/" & filePath
+		end
 		set end of filesToSelect to posix file filePath
 	end
 	tell application "Finder"
 		select filesToSelect
+		activate
 	end
 	return
 end
