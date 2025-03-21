@@ -38,9 +38,10 @@ class Tool(object):
                 predicates[key] = concatenated
 
             if len(predicates) != len(self.args.predicate_aliases):
-                print(self.args.predicate_aliases)
                 missing_keys = set(self.args.predicate_aliases) - set(predicates.keys())
-                raise Exception(f'Unable to find predicate for key(s) {", ".join(missing_keys)}')
+                print(f'Unable to find predicate aliases for key(s) {", ".join(missing_keys)}, will OR them as literal predicates', file=sys.stderr)
+                for key in missing_keys:
+                    predicates[key] = key
 
             predicate = None
             if len(predicates) > 1:
