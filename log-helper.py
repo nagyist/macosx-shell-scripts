@@ -25,7 +25,7 @@ class Tool(object):
         state = 'start'
         while args_in:
             arg = args_in.pop(0)
-            print('state', state, arg)
+            # print('state', state, arg)
 
             if state == 'reading_archive_path':
                 archive_path = Path(arg)
@@ -50,9 +50,6 @@ class Tool(object):
         if archive_path:
             timezone_delta = cls.timezone_delta_for_log_archive_path(archive_path)
         
-        if timezone_delta:
-            print(f'Timezone delta: {timezone_delta}')
-
         if timestamp_argument_indexes and timezone_delta:
             cls.update_timestamp_args(args_out, timestamp_argument_indexes, timezone_delta)
 
@@ -75,10 +72,9 @@ class Tool(object):
             print('Unable to get timestamp from first log line', file=sys.stderr)
             return None
 
-        # print('originator:', first_line_timestamp_original, first_line_timestamp_original.utcoffset())
-        # print('local:', first_line_timestamp_local, first_line_timestamp_local.utcoffset())
-
         delta = first_line_timestamp_original.utcoffset() - first_line_timestamp_local.utcoffset()
+        if delta:
+            print(f'timezone delta: {delta} (originator {first_line_timestamp_original}/{first_line_timestamp_original.utcoffset()}, local {first_line_timestamp_local}/{first_line_timestamp_local.utcoffset()}')
         return delta
 
     @classmethod
