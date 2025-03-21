@@ -116,6 +116,12 @@ class KeyedArchiveObjectGraphNode:
         if child_archive:
             return child_archive.dump_string().strip(), 'keyed archive'
 
+        # Attempt to parse as binary plist
+        # todo: find a way to print the structure of the plist as a subtree
+        # child_plist, error = KeyedArchive.plist_from_bytes(dump_bytes, ChildArchiveInputOutputConfiguration(self.archive.input_output_configuration))
+        # if child_plist:
+        #     return child_plist.dump_string().strip(), 'binary plist'
+
         type_label = None
         # Attempt to decompress
         try:
@@ -586,11 +592,13 @@ class KeyedArchive:
         except:
             return None, "unable to parse plist"
 
+        if '$objects' not in property_list_object:
+            return None, "plist is not a keyed archive"
+
         archive_dictionary = None
         try:
-            if '$objects' in property_list_object:
-                archive_dictionary = dict(property_list_object)
-        except Exception as e:
+            archive_dictionary = dict(property_list_object)
+        except Exception:
             pass
 
         if not archive_dictionary:
@@ -708,8 +716,6 @@ class KeyedArchive:
         data = KeyedArchiveInputData.guess_encoding(data, encoding)
         archive, error = cls.archive_from_bytes(data.data(), configuration)
         if not archive:
-            if error:
-                error = unicode(error).encode('utf-8')
             raise Exception('Unable to decode a keyed archive from input data: {}'.format(error))
         return archive
 
